@@ -1,4 +1,4 @@
-function testn1() {
+function testn1() { // Locate Data from GApps to be used
   var calendar = CalendarApp.getAllCalendars
   var spreadsheet = SpreadsheetApp.getActive();
   console.log(CalendarApp.getEventsForDay)
@@ -17,24 +17,36 @@ function valset() {
   spreadsheet.getCurrentCell().offset(1, 0).activate();
 };
 
-function onOpen() {
+function onOpen() {    // Read this chunk on open, is used to create UI objects for easy access
    var ui = SpreadsheetApp.getUi();
   ui.createMenu('iCal Tools')
       .addItem('Create Events', 'crevnt')
       .addToUi();
+  // Intro alert
  SpreadsheetApp.getUi().alert("ℹ️ Information: Press 'iCal Tools'/'Create Events' to update the sheet, sheet is updated automatically hourly. If you are a viewer this does not apply")
 }
-function crevnt() {
+function crevnt() { // Alert that the calendar is updating
   SpreadsheetApp.getUi().alert('🛠️ Working: Sheet is updating from calendar manually, If you are an editor, check the logs for errors');
   listPrimary()
 }
 function listPrimary() {
-  deleteall()
+  
+  // Delete all cached data
+  deleteall() // Lets check all events from the primary calendar 
+  // I would note that this tool was hand crafted for a specific reason and if you wish to use this for yourself you will indeed need to modify some seconds of it
+  // for example, Calendar IDs, and number of functions called to merge calendars into primary
+  //As this is the first fun I will break it down for those who want to understand it 
+  
+  
   spreadsheet = SpreadsheetApp.getActive();
+  // Get the selected Spreadsheet  (aka primary)
   var scriptPrp = PropertiesService.getScriptProperties()
+  // Get the properties of said sheet
   var calid = scriptPrp.getProperty('newcalid')
+  
   var calendarId = 'primary'
   Logger.log(calendarId + ": Calendar ID")
+  //Bind a calendar and calendar ID to it
   var now = new Date();
   var events = Calendar.Events.list(calendarId, {
     timeMin: now.toISOString(),
@@ -42,7 +54,8 @@ function listPrimary() {
     orderBy: 'startTime',
     maxResults: 100
   });
-  if (events.items && events.items.length > 0) {
+  //Set the params to fetch payload
+  if (events.items && events.items.length > 0) { // lets check this list is not empty
     spreadsheet = SpreadsheetApp.getActive()
     for (var i = 0; i < events.items.length; i++) {
       var event = events.items[i];
@@ -50,13 +63,13 @@ function listPrimary() {
         // All-day event.
         var start = new Date(event.start.date);
         Logger.log('%s (%s)', event.summary, start.toLocaleDateString());
-        Logger.log(listCalendars())
+        Logger.log(listCalendars()) // Dump the info and make sure the results were not a false positive
 if (event.summary == null) Logger.log(event.summary + event.source + ": returned null")
         if (event.summary == null) Logger.log(event.summary + event.source + ": returned null")
         var valwow = event.summary + ' ' + event.start
         spreadsheet.getCurrentCell().setValue(valwow);
         spreadsheet.getCurrentCell().offset(1, 0).activate();
-      } else {
+      } else { // Add the data as an offset of the last into the sheet
         var start = new Date(event.start.dateTime);
         Logger.log('%s (%s)', event.summary, start.toLocaleString());
         var valwow = ``
@@ -68,14 +81,14 @@ if (event.summary == null) Logger.log(event.summary + event.source + ": returned
     // Utilities.sleep(30 * 1000);
   } else {
     // SpreadsheetApp.getUi().alert("Primary iCal: No events found");
-    Logger.log('No events found.');
+    Logger.log('No events found.'); // No events found, lets back out of the calendar and return an error in gapps logs
   }
 }
-function listPrimary2() {
+function listPrimary2() { // check events from the secondary calendar and update the payload
   spreadsheet = SpreadsheetApp.getActive();
   var scriptPrp = PropertiesService.getScriptProperties()
   var calid = scriptPrp.getProperty('newcalid')
-  var calendarId = 'aj6ib22496f56gr2hcqses2fphtp3paa@import.calendar.google.com'
+  var calendarId = 'aj6a@import.calendar.google.com'
   Logger.log(calendarId + ": Calendar ID")
   var now = new Date();
   var events = Calendar.Events.list(calendarId, {
@@ -115,8 +128,8 @@ if (event.summary == null) Logger.log(event.summary + event.source + ": returned
 function listPrimary3() {
   spreadsheet = SpreadsheetApp.getActive();
   var scriptPrp = PropertiesService.getScriptProperties()
-  var calid = scriptPrp.getProperty('newcalid')
-  var calendarId = 'c_classroom368aba6f@group.calendar.google.com'
+  var calid = scriptPrp.getProperty('newcalid')   // Check active classroom calendars and update the payload
+  var calendarId = 'c_classroom@group.calendar.google.com'
   Logger.log(calendarId + ": Calendar ID")
   var now = new Date();
   var events = Calendar.Events.list(calendarId, {
@@ -157,7 +170,7 @@ function listPrimary4() {
   spreadsheet = SpreadsheetApp.getActive();
   var scriptPrp = PropertiesService.getScriptProperties()
   var calid = scriptPrp.getProperty('newcalid')
-  var calendarId = 'c_classroomfc919c1c@group.calendar.google.com'
+  var calendarId = 'c_@group.calendar.google.com'
   Logger.log(calendarId + ": Calendar ID")
   var now = new Date();
   var events = Calendar.Events.list(calendarId, {
@@ -198,7 +211,7 @@ function listPrimary5() {
   spreadsheet = SpreadsheetApp.getActive();
   var scriptPrp = PropertiesService.getScriptProperties()
   var calid = scriptPrp.getProperty('newcalid')
-  var calendarId = 'c_classroom2fe7040c@group.calendar.google.com'
+  var calendarId = 'c@group.calendar.google.com'
   Logger.log(calendarId + ": Calendar ID")
   var now = new Date();
   var events = Calendar.Events.list(calendarId, {
@@ -239,7 +252,7 @@ function listPrimary6() {
   spreadsheet = SpreadsheetApp.getActive();
   var scriptPrp = PropertiesService.getScriptProperties()
   var calid = scriptPrp.getProperty('newcalid')
-  var calendarId = 'c_classroom7634b5ac@group.calendar.google.com'
+  var calendarId = 'c_c@calendar.google.com'
   Logger.log(calendarId + ": Calendar ID")
   var now = new Date();
   var events = Calendar.Events.list(calendarId, {
@@ -280,7 +293,7 @@ function listPrimary7() {
   spreadsheet = SpreadsheetApp.getActive();
   var scriptPrp = PropertiesService.getScriptProperties()
   var calid = scriptPrp.getProperty('newcalid')
-  var calendarId = 'c_classroomc0226b5d@group.calendar.google.com'
+  var calendarId = 'c_@group.google.com'
   Logger.log(calendarId + ": Calendar ID")
   var now = new Date();
   var events = Calendar.Events.list(calendarId, {
@@ -321,7 +334,7 @@ function listPrimary8() {
   spreadsheet = SpreadsheetApp.getActive();
   var scriptPrp = PropertiesService.getScriptProperties()
   var calid = scriptPrp.getProperty('newcalid')
-  var calendarId = 'c_ocbf2apginsaqv017stvdc1pbc@group.calendar.google.com'
+  var calendarId = 'c_ocb@group.calendar.google.com'
   Logger.log(calendarId + ": Calendar ID")
   var now = new Date();
   var events = Calendar.Events.list(calendarId, {
@@ -358,7 +371,7 @@ if (event.summary == null) Logger.log(event.summary + event.source + ": returned
     Logger.log('No events found.');
   }
 }
-function listPrimary9() {
+function listPrimary9() {  // A simple calendar function to get holidays in the united states coming up and add them to the list
   spreadsheet = SpreadsheetApp.getActive();
   var scriptPrp = PropertiesService.getScriptProperties()
   var calid = scriptPrp.getProperty('newcalid')
@@ -413,7 +426,7 @@ function lcal() {
         var scriptPrp = PropertiesService.getScriptProperties()
         scriptPrp.setProperty('newcalid', calendar.id)
       }
-    } else {
+    } else { // No Calendars found, alert the user
       // SpreadsheetApp.getUi().alert("iCal Error: No Calendars found");
       Logger.log('No calendars found.');
     }
@@ -421,7 +434,7 @@ function lcal() {
   } while (pageToken);
 }
 
-function deleteall() {
+function deleteall() { // Clear calendar cache to prevent data conflicting
   var spreadsheet = SpreadsheetApp.getActive();
   spreadsheet.getRange('A1').activate();
   var currentCell = spreadsheet.getCurrentCell();
@@ -430,6 +443,6 @@ function deleteall() {
   currentCell.activateAsCurrentCell();
   spreadsheet.getActiveRangeList().clear({contentsOnly: true, skipFilteredRows: true});
 };
-function sheetchange() {
+function sheetchange() { // Calendar was updated alert the user
  SpreadsheetApp.getUi().alert("⚠️Warning: Sheet was modified, This may not reflect accurate data")
 }
